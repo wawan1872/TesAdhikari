@@ -51,21 +51,20 @@ class ContentController extends BaseController
         if (!$user) {
             return response()->json(['message' => 'User not found or invalid token'], 401);
         }
-        // Temukan konten berdasarkan ID
+        
         $content = Content::findOrFail($id);
 
-        // Pastikan hanya pemilik konten yang dapat memperbarui
+        
         if ($content->created_by !== JWTAuth::user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        // Validasi input untuk pembaruan
+        
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'body' => 'sometimes|required|string',
         ]);
 
-        // Perbarui konten dengan data yang valid
         $content->update($validated);
 
         return response()->json([
